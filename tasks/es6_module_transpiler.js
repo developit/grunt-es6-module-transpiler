@@ -10,18 +10,14 @@
 
 module.exports = function(grunt) {
 
-  var path = require('path');
+  var path = require('path'),
+      transpiler = require("es6-module-transpiler");
 
   function transpile(file, options) {
     var src = file.src,
-        Compiler = require("es6-module-transpiler").Compiler,
-        compiler, compiled, ext, method, moduleName;
+        compiled, ext, method, moduleName;
 
     ext = path.extname(src);
-
-    if (ext.slice(1) === 'coffee') {
-      options = grunt.util._.extend({coffee: true}, options);
-    }
 
     if (options.anonymous) {
       moduleName = '';
@@ -37,28 +33,31 @@ module.exports = function(grunt) {
       }
     }
 
-    compiler = new Compiler(grunt.file.read(src), moduleName, options);
+    //compiler = new Compiler(grunt.file.read(src), moduleName, options);
 
-    switch(options.type){
+    var formatter;
+
+    switch(String(options.type).toLowerCase()){
     case 'cjs':
-      method = "toCJS";
+    case 'commonjs':
+      formatter = new transpiler.formatters.commonjs();
       break;
-    case 'amd':
-      method = "toAMD";
-      break;
-    case 'yui':
-      method = "toYUI";
-      break;
-    case 'globals':
-      method = "toGlobals";
+    case 'bundle':
+      formatter = new transpiler.formatters.bundle();
       break;
     default:
       throw new Error("unknown transpile destination type: " + options.type);
     }
 
-    compiled = compiler[method].apply(compiler);
+    var container = new transpiler.Container({
+      resolvers: [
+        new transpiler.FileResolver([ path.dirname(src) ])
+      ],
+      formatter: formatter
+    });
 
-    grunt.file.write(file.dest, compiled);
+    container.getModule( path.basename(moduleName) );
+    container.write(file.dest);
   }
 
   function formatTranspilerError(filename, e) {
@@ -85,14 +84,15 @@ module.exports = function(grunt) {
           return true;
         }
       }).forEach(function(path){
-        try {
           transpile({src:path, dest:file.dest, orig:file.orig}, opts);
-        } catch (e) {
-          var message = formatTranspilerError(path, e);
-
-          grunt.log.error(message);
-          grunt.fail.warn('Error compiling ' + path);
-        }
+        // try {
+        //   transpile({src:path, dest:file.dest, orig:file.orig}, opts);
+        // } catch (e) {
+        //   var message = formatTranspilerError(path, e);
+        //
+        //   grunt.log.error(message);
+        //   grunt.fail.warn('Error compiling ' + path);
+        // }
       });
     });
 

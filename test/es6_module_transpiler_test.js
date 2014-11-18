@@ -31,32 +31,20 @@ exports.es6_module_transpiler = {
     done();
   },
   toCJS: function(test) {
-    test.expect(1);
+    test.expect(2);
 
-    var actual = normalizedFileRead('tmp/cjs.js');
-    var expected = normalizedFileRead('test/expected/cjs.js');
+    var actual = normalizedFileRead('tmp/index.js').trim();
+    var expected = normalizedFileRead('test/expected/index.js').trim();
     test.equal(actual, expected, 'outputs CommonJS');
 
-    test.done();
-  },
-  toAMD: function(test) {
-    test.expect(1);
-
-    var actual = normalizedFileRead('tmp/amd.js');
-    var expected = normalizedFileRead('test/expected/amd.js');
-    test.equal(actual, expected, 'outputs AMD');
+    test.equal(
+      normalizedFileRead('tmp/bar.js').trim(),
+      normalizedFileRead('test/expected/bar.js').trim(),
+      'outputs CommonJS dependencies'
+    );
 
     test.done();
-  },
-  toYUI: function(test) {
-    test.expect(1);
-
-    var actual = normalizedFileRead('tmp/yui.js');
-    var expected = normalizedFileRead('test/expected/yui.js');
-    test.equal(actual, expected, 'outputs YUI');
-
-    test.done();
-  },
+  }/*,
   toGlobals: function(test) {
     test.expect(1);
 
@@ -65,51 +53,5 @@ exports.es6_module_transpiler = {
     test.equal(actual, expected, 'outputs Globals');
 
     test.done();
-  },
-  moduleNameOption: function(test) {
-    test.expect(1);
-
-    var actual = normalizedFileRead('tmp/name.js');
-    var expected = normalizedFileRead('test/expected/name.js');
-    test.equal(actual, expected, 'understands moduleName option');
-
-    test.done();
-  },
-  moduleNameCallbackOption: function(test) {
-    test.expect(1);
-
-    var actual = normalizedFileRead('tmp/name_callback.js');
-    var expected = normalizedFileRead('test/expected/name_callback.js');
-    test.equal(actual, expected, 'understands moduleName option with function');
-
-    test.done();
-  },
-  moduleNameCallbackOptionWithCwd: function(test) {
-    test.expect(1);
-
-    var actual = normalizedFileRead('tmp/name_callback_with_cwd.js');
-    var expected = normalizedFileRead('test/expected/name_callback_with_cwd.js');
-    test.equal(actual, expected, 'understands moduleName option with function with cwd');
-
-    test.done();
-  },
-  anonymousOption: function(test) {
-    test.expect(1);
-
-    var actual = normalizedFileRead('tmp/anonymous.js');
-    var expected = normalizedFileRead('test/expected/anonymous.js');
-    test.equal(actual, expected, 'understands anonymous option');
-
-    test.done();
-  },
-  mixedCoffeeAndJS: function(test) {
-    test.expect(1);
-
-    // in the config there is a .coffee file listed before this one
-    var actual = normalizedFileRead('tmp/anonymous.js');
-    var expected = normalizedFileRead('test/expected/anonymous.js');
-    test.equal(actual, expected, 'uses coffee option only on CoffeeScript files');
-
-    test.done();
-  }
+  }*/
 };

@@ -40,25 +40,13 @@ module.exports = function(grunt) {
     transpile: {
       toCJS: {
         type: "cjs",
-        files: {
-          'tmp/cjs.js': ['test/fixtures/input.js'],
-          'tmp/cjs-bar.js': ['test/fixtures/bar.js']
-        },
-      },
-      toAMD: {
-        type: "amd",
-        files: {
-          'tmp/amd.js': ['test/fixtures/input.js'],
-          'tmp/amd-bar.js': ['test/fixtures/bar.js']
-        }
-      },
-      toYUI: {
-        type: "yui",
-        files: {
-          'tmp/yui.js': ['test/fixtures/input.js'],
-          'tmp/yui-bar.js': ['test/fixtures/bar.js']
-        }
-      },
+        files: [{
+          expand: true,
+          cwd: 'test/fixtures',
+          src: ['**/*.js'],
+          dest: 'tmp'
+        }],
+    }/*,
       toGlobals: {
         type: "globals",
         imports: { bar: "Bar" },
@@ -66,72 +54,7 @@ module.exports = function(grunt) {
           'tmp/globals.js': ['test/fixtures/input.js'],
           'tmp/globals-bar.js': ['test/fixtures/bar.js']
         }
-      },
-      moduleName: {
-        type: 'amd',
-        moduleName: 'namedModule',
-        files: {
-          'tmp/name.js': ['test/fixtures/name.js'],
-        }
-      },
-      moduleNameCallback: {
-        type: 'amd',
-        moduleName: function(srcWithoutExt, file){
-          return 'my_app/' + srcWithoutExt.replace(/^test\/fixtures\//, '');
-        },
-        files: {
-          'tmp/name_callback.js': ['test/fixtures/name_callback.js'],
-        }
-      },
-      moduleNameCallbackWithCwd: {
-        type: 'amd',
-        moduleName: function(srcWithoutExt, file){
-          return 'my_app/' + srcWithoutExt;
-        },
-        files: [
-          {
-            expand: true,     // Enable dynamic expansion.
-            cwd: 'test/fixtures/lib/',      // Src matches are relative to this path.
-            src: ['**/*.js'], // Actual pattern(s) to match.
-            dest: 'tmp/'   // Destination path prefix.
-          }
-        ]
-      },
-      anonymous: {
-        type: 'amd',
-        anonymous: true,
-        files: {
-          'tmp/anonymous.js': ['test/fixtures/anonymous.js'],
-        }
-      },
-      coffeeSrc: {
-        type: 'amd',
-        files: {
-          'tmp/coffee.js': ['test/fixtures/coffee.coffee'],
-        }
-      },
-      mixedCoffeeAndJS: {
-        type: 'amd',
-        anonymous: true,
-        files: {
-          'tmp/anonymous.coffee': ['test/fixtures/anonymous.coffee'],
-          'tmp/anonymous.js': ['test/fixtures/anonymous.js'],
-        }
-      }
-      // importError: {
-      //   type: 'amd',
-      //   anonymous: true,
-      //   files: {
-      //     'tmp/import-error.js': ['test/fixtures/import-error.js']
-      //   }
-      // },
-      // exportError: {
-      //   type: 'amd',
-      //   anonymous: true,
-      //   files: {
-      //     'tmp/export-error.js': ['test/fixtures/export-error.js']
-      //   }
-      // }
+      }*/
     },
 
     // Unit tests.

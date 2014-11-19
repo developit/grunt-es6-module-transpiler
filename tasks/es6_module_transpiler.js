@@ -11,7 +11,8 @@
 module.exports = function(grunt) {
 
   var path = require('path'),
-      transpiler = require("es6-module-transpiler");
+      transpiler = require("es6-module-transpiler"),
+      PassthruResolver = require('../lib/PassthruResolver');
 
   function transpile(file, options) {
     var src = file.src,
@@ -51,12 +52,24 @@ module.exports = function(grunt) {
 
     var container = new transpiler.Container({
       resolvers: [
+        new PassthruResolver([ moduleName ]),
         new transpiler.FileResolver([ path.dirname(src) ])
       ],
       formatter: formatter
     });
 
+    // patched in support for a pass-through resolver
+    container.getModules = function() {
+        var modules = this.modules;
+        return Object.keys(modules).map(function(key) {
+            return modules[key];
+        }).filter(function (module) {
+            return !module.external;
+        });
+    };
+
     container.getModule( path.basename(moduleName) );
+    //container.getModule( moduleName );
     container.write(file.dest);
   }
 
